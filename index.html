@@ -1,0 +1,260 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { ArrowUpRight, ArrowDownRight, Plus, Filter, Activity as ActivityIcon, Server, Timer, AlertTriangle, Search } from "lucide-react";
+import { issues, getStatus, statusTone, type Status } from "@/data/issues";
+
+export const Route = createFileRoute("/_app/")({
+  component: IssueTracker,
+  head: () => ({
+    meta: [
+      { title: "Issue Tracker — CarryBee" },
+      { name: "description", content: "Live queue of open, in-progress, and resolved incidents for the CarryBee Accounts Development Team." },
+    ],
+  }),
+});
+
+function statusPill(tone: string, status: string) {
+  const map: Record<string, string> = {
+    red: "bg-red-500/15 text-red-400 ring-red-500/25",
+    yellow: "bg-yellow/15 text-yellow ring-yellow/25",
+    blue: "bg-sky-500/15 text-sky-400 ring-sky-500/25",
+    muted: "bg-white/5 text-muted-foreground ring-white/10",
+  };
+  return (
+    <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ring-1 ${map[tone]}`}>
+      {status}
+    </span>
+  );
+}
+
+const FILTERS: (Status | "All")[] = ["All", "Open", "In Progress", "Resolved"];
+
+function IssueTracker() {
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<Status | "All">("All");
+
+  const stats = useMemo(() => {
+    const total = issues.length;
+    const open = issues.filter((i) => getStatus(i) === "Open").length;
+    const progress = issues.filter((i) => getStatus(i) === "In Progress").length;
+    const resolved = issues.filter((i) => getStatus(i) === "Resolved").length;
+    const resolutionRate = total ? Math.round((resolved / total) * 100) : 0;
+    return { total, open, progress, resolved, resolutionRate };
+  }, []);
+
+  const merchantChart = useMemo(() => {
+    const m: Record<string, number> = {};
+    issues.forEach((i) => (m[i.merchant] = (m[i.merchant] || 0) + 1));
+    return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  }, []);
+  const maxMerchant = Math.max(...merchantChart.map(([, v]) => v), 1);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return issues
+      .filter((i) => filter === "All" || getStatus(i) === filter)
+      .filter((i) =>
+        !q
+          ? true
+          : i.ticketId.toLowerCase().includes(q) ||
+            i.consignmentId.toLowerCase().includes(q) ||
+            i.merchant.toLowerCase().includes(q) ||
+            i.issueTag.toLowerCase().includes(q) ||
+            i.details.toLowerCase().includes(q),
+      )
+      .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.timestamp < b.timestamp ? 1 : -1));
+  }, [query, filter]);
+
+  const kpis = [
+    { label: "Total Issues", value: stats.total, delta: "all-time", trend: "up", tone: "muted", icon: Server, sub: "in queue" },
+    { label: "Open", value: stats.open, delta: "needs triage", trend: "up", tone: "yellow", icon: AlertTriangle, sub: "unassigned" },
+    { label: "In Progress", value: stats.progress, delta: "assigned", trend: "down", tone: "muted", icon: ActivityIcon, sub: "team working" },
+    { label: "Resolution Rate", value: `${stats.resolutionRate}%`, delta: `${stats.resolved} resolved`, trend: "up", tone: "muted", icon: Timer, sub: "7 day window" },
+  ];
+
+  return (
+    <div className="space-y-8">
+      <div className="flex items-end justify-between gap-6 flex-wrap">
+        <div className="space-y-1">
+          <div className="text-[11px] font-mono uppercase tracking-widest text-yellow">/ accounts dev · issue tracker</div>
+          <h1 className="text-3xl font-semibold tracking-tight">Live Queue</h1>
+          <p className="text-sm text-muted-foreground max-w-[60ch]">
+            Every consignment issue reported by merchants, sorted newest first. Yellow marks what
+            needs your attention now.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-md ring-1 ring-white/10 hover:bg-white/5">
+            <Filter className="size-4" strokeWidth={1.75} /> Export
+          </button>
+          <button className="inline-flex items-center gap-2 bg-yellow text-charcoal-dark py-2 px-3 rounded-md text-xs font-semibold uppercase tracking-wider hover:bg-yellow-muted transition-colors">
+            <Plus className="size-4" strokeWidth={2.5} /> New Issue
+          </button>
+        </div>
+      </div>
+
+      {/* KPIs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        {kpis.map((k) => {
+          const Icon = k.icon;
+          return (
+            <div key={k.label} className="bg-surface p-5 rounded-xl ring-1 ring-white/5 relative overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] font-mono font-medium text-muted-foreground uppercase tracking-widest">
+                  {k.label}
+                </span>
+                <div className={`p-1.5 rounded-md ${k.tone === "yellow" ? "bg-yellow/15 text-yellow" : "bg-white/5 text-muted-foreground"}`}>
+                  <Icon className="size-4" strokeWidth={1.75} />
+                </div>
+              </div>
+              <div className="text-3xl font-semibold tracking-tight">{k.value}</div>
+              <div className="mt-2 flex items-center gap-1.5 text-xs">
+                {k.trend === "up" ? (
+                  <ArrowUpRight className="size-3.5 text-emerald-400" />
+                ) : (
+                  <ArrowDownRight className="size-3.5 text-emerald-400" />
+                )}
+                <span className="text-emerald-400 font-medium">{k.delta}</span>
+                <span className="text-muted-foreground">· {k.sub}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        {/* Table */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <h2 className="text-lg font-medium">Consignment Issues</h2>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Search className="absolute inset-y-0 left-2.5 my-auto size-3.5 text-muted-foreground" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search ticket, merchant, tag…"
+                  className="w-64 bg-white/5 ring-1 ring-white/10 rounded-md py-1.5 pl-8 pr-3 text-xs placeholder:text-muted-foreground focus:ring-yellow focus:ring-2 outline-none"
+                />
+              </div>
+              <div className="flex ring-1 ring-white/10 rounded-md overflow-hidden text-[10px] font-mono uppercase tracking-widest">
+                {FILTERS.map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFilter(f)}
+                    className={
+                      "px-2.5 py-1.5 transition-colors " +
+                      (filter === f
+                        ? "bg-yellow text-charcoal-dark"
+                        : "text-muted-foreground hover:bg-white/5")
+                    }
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-surface rounded-xl ring-1 ring-white/5 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-white/[0.03] border-b border-hairline">
+                  <tr>
+                    <th className="px-4 py-3 font-medium text-[10px] uppercase tracking-widest text-muted-foreground font-mono">Ticket</th>
+                    <th className="px-4 py-3 font-medium text-[10px] uppercase tracking-widest text-muted-foreground font-mono">Merchant / Issue</th>
+                    <th className="px-4 py-3 font-medium text-[10px] uppercase tracking-widest text-muted-foreground font-mono">Consignment</th>
+                    <th className="px-4 py-3 font-medium text-[10px] uppercase tracking-widest text-muted-foreground font-mono text-center">Status</th>
+                    <th className="px-4 py-3 font-medium text-[10px] uppercase tracking-widest text-muted-foreground font-mono text-right">Reported</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {filtered.map((r) => {
+                    const status = getStatus(r);
+                    return (
+                      <tr key={r.id} className="hover:bg-white/[0.02] transition-colors">
+                        <td className="px-4 py-4 font-mono text-xs text-muted-foreground whitespace-nowrap">{r.ticketId}</td>
+                        <td className="px-4 py-4 min-w-[280px]">
+                          <div className="font-medium text-foreground">{r.merchant}</div>
+                          <div className="text-xs text-muted-foreground">
+                            <span className="text-yellow/90">{r.issueTag}</span> · {r.details.length > 70 ? r.details.slice(0, 70) + "…" : r.details}
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 font-mono text-xs text-muted-foreground whitespace-nowrap">{r.consignmentId}</td>
+                        <td className="px-4 py-4">
+                          <div className="flex justify-center">{statusPill(statusTone[status], status)}</div>
+                        </td>
+                        <td className="px-4 py-4 text-right text-muted-foreground font-mono text-xs whitespace-nowrap">
+                          <div>{r.date}</div>
+                          <div className="text-[10px] text-muted-foreground/70">{r.timestamp}</div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {filtered.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="text-center py-12 text-sm text-muted-foreground">
+                        No issues match your filters.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Side */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-medium">Recent Responses</h2>
+          <div className="bg-charcoal-dark rounded-xl p-5 ring-1 ring-white/5">
+            <div className="space-y-6">
+              {issues
+                .filter((i) => i.respondedBy)
+                .sort((a, b) => (a.respondedAt! < b.respondedAt! ? 1 : -1))
+                .slice(0, 4)
+                .map((r, i, arr) => (
+                  <div
+                    key={r.id}
+                    className={`relative pl-6 ${i < arr.length - 1 ? "pb-6 border-l border-white/10" : ""}`}
+                  >
+                    <div className={`absolute -left-1 top-0 size-2 rounded-full ring-4 ring-charcoal-dark ${i === 0 ? "bg-yellow" : "bg-white/30"}`} />
+                    <div className="text-[11px] font-mono text-zinc-500 mb-1">{r.respondedAt?.replace("T", " ")}</div>
+                    <div className="text-sm text-zinc-100 font-medium">
+                      <span className={i === 0 ? "text-yellow" : ""}>{r.respondedBy}</span> · {r.ticketId}
+                    </div>
+                    <p className="text-xs text-zinc-500 mt-1 leading-normal">
+                      {r.merchant} — <span className="text-zinc-400">{r.issueTag}</span>
+                    </p>
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          <div className="bg-surface p-5 rounded-xl ring-1 ring-white/5">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Top Merchants</span>
+              <span className="text-xs text-muted-foreground">by ticket volume</span>
+            </div>
+            <div className="space-y-2.5">
+              {merchantChart.map(([name, count]) => (
+                <div key={name}>
+                  <div className="flex items-baseline justify-between text-xs mb-1">
+                    <span className="truncate pr-2">{name}</span>
+                    <span className="font-mono text-muted-foreground">{count}</span>
+                  </div>
+                  <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-yellow"
+                      style={{ width: `${(count / maxMerchant) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
