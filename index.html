@@ -993,9 +993,29 @@
   </div>
 
   <script>
+    // Bangladesh Standard Time is UTC+6, no daylight saving.
+    // Using Intl with an explicit timeZone means this is correct
+    // no matter what timezone the visitor's browser or the server is set to.
+    function getBSTParts() {
+      const fmt = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Asia/Dhaka',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false
+      });
+      const parts = {};
+      fmt.formatToParts(new Date()).forEach(p => { if (p.type !== 'literal') parts[p.type] = p.value; });
+      return parts; // { year, month, day, hour, minute, second }
+    }
+
+    // Returns an ISO-8601 string with the correct +06:00 offset, e.g. 2026-07-09T21:45:12+06:00
+    function getBSTISOString() {
+      const p = getBSTParts();
+      return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}:${p.second}+06:00`;
+    }
+
     function generateRefId() {
-      const now = new Date();
-      const year = now.getFullYear();
+      const year = getBSTParts().year;
       const random = Math.floor(1000 + Math.random() * 9000);
       return 'CBE-' + year + '-' + random;
     }
@@ -1050,7 +1070,8 @@
           issueStatus: document.getElementById('issueStatus').value,
           issueCategory: document.getElementById('issueCategory').value,
           subCategory: document.getElementById('subCategory').value,
-          issueDetails: document.getElementById('issueDetails').value.trim()
+          issueDetails: document.getElementById('issueDetails').value.trim(),
+          submittedAtBST: getBSTISOString()
         };
 
         const response = await fetch('/api/escalations', {
