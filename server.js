@@ -15,6 +15,28 @@ app.use((req, res, next) => {
 
 let db;
 
+// Bangladesh Standard Time is UTC+6, no daylight saving.
+// SQLite's CURRENT_TIMESTAMP is always UTC, so we compute and
+// store the BST wall-clock time explicitly instead of relying on it.
+function getBSTTimestamp() {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Dhaka',
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false
+  }).formatToParts(new Date()).reduce((acc, p) => {
+    if (p.type !== 'literal') acc[p.type] = p.value;
+    return acc;
+  }, {});
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
+}
+
+function getBSTYear() {
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Dhaka', year: 'numeric'
+  }).format(new Date());
+}
+
 async function initDb() {
   const url = process.env.TURSO_DATABASE_URL;
   const authToken = process.env.TURSO_AUTH_TOKEN;
@@ -108,13 +130,14 @@ app.post("/api/escalations", async (req, res) => {
       return res.status(400).json({ success: false, error: "Missing required fields" });
     }
 
-    const year = new Date().getFullYear();
+    const year = getBSTYear();
     const random = Math.floor(1000 + Math.random() * 9000);
     const refId = `CBE-${year}-${random}`;
+    const createdAtBST = getBSTTimestamp();
 
     await db.execute({
-      sql: `INSERT INTO escalations (ref_id, merchant_id, kam_name, channel, zone, concern_hub, issue_status, issue_category, issue_sub_category, issue_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [refId, merchantId, kamName || null, channel || null, zone || null, concernHub, issueStatus || "Pending", issueCategory, subCategory, issueDetails]
+      sql: `INSERT INTO escalations (ref_id, merchant_id, kam_name, channel, zone, concern_hub, issue_status, issue_category, issue_sub_category, issue_details, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [refId, merchantId, kamName || null, channel || null, zone || null, concernHub, issueStatus || "Pending", issueCategory, subCategory, issueDetails, createdAtBST]
     });
 
     res.status(201).json({ success: true, data: { refId } });
