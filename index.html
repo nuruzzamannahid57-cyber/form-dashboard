@@ -438,7 +438,6 @@
       .cb-header h1 { font-size: 20px; }
     }
   </style>
-<base target="_blank">
 </head>
 <body>
   <div class="cb-wrapper">
@@ -1027,7 +1026,7 @@
       return valid;
     }
 
-    function submitForm() {
+    async function submitForm() {
       if (!validate()) return;
 
       const btn = document.getElementById('submitBtn');
@@ -1041,11 +1040,40 @@
         document.head.appendChild(s);
       }
 
-      setTimeout(() => {
-        document.getElementById('refId').textContent = generateRefId();
-        document.getElementById('formContent').style.display = 'none';
-        document.getElementById('successView').style.display = 'block';
-      }, 1200);
+      try {
+        const payload = {
+          merchantId: document.getElementById('merchantId').value.trim(),
+          kamName: document.getElementById('kamName').value,
+          channel: document.getElementById('channel').value,
+          zone: document.getElementById('zone').value,
+          concernHub: document.getElementById('concernHub').value,
+          issueStatus: document.getElementById('issueStatus').value,
+          issueCategory: document.getElementById('issueCategory').value,
+          subCategory: document.getElementById('subCategory').value,
+          issueDetails: document.getElementById('issueDetails').value.trim()
+        };
+
+        const response = await fetch('/api/escalations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          document.getElementById('refId').textContent = result.data.refId;
+          document.getElementById('formContent').style.display = 'none';
+          document.getElementById('successView').style.display = 'block';
+        } else {
+          throw new Error(result.error || 'Submission failed');
+        }
+      } catch (error) {
+        console.error('Submit error:', error);
+        btn.disabled = false;
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg> Submit Escalation';
+        alert('Failed to submit: ' + error.message);
+      }
     }
 
     function resetForm() {
