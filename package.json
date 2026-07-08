@@ -1,0 +1,17 @@
+{
+  "name": "carrybee-escalation-form",
+  "version": "1.0.0",
+  "description": "Carrybee Issues Escalation Form with Turso",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.14.0",
+    "express": "^4.21.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
