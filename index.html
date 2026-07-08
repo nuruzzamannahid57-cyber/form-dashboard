@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrybee Issues Escalation Form</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cb-primary: #6366f1;
+      --cb-primary-dark: #4f46e5;
+      --cb-primary-light: #818cf8;
+      --cb-bg: #f8fafc;
+      --cb-card: #ffffff;
+      --cb-border: #e2e8f0;
+      --cb-border-focus: #6366f1;
+      --cb-text: #1e293b;
+      --cb-text-sec: #64748b;
+      --cb-text-hint: #94a3b8;
+      --cb-danger: #ef4444;
+      --cb-danger-bg: #fef2f2;
+      --cb-success: #10b981;
+      --cb-success-bg: #ecfdf5;
+      --cb-radius-sm: 8px;
+      --cb-radius-md: 12px;
+      --cb-radius-lg: 16px;
+      --cb-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 20px rgba(0,0,0,0.06);
+      --cb-shadow-hover: 0 4px 12px rgba(99,102,241,0.15);
+      --cb-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--cb-bg);
+      color: var(--cb-text);
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    .cb-wrapper {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .cb-header {
+      text-align: center;
+      padding: 36px 24px 30px;
+      background: linear-gradient(135deg, #6366f1 0%, #7c3aed 50%, #a855f7 100%);
+      border-radius: var(--cb-radius-lg);
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--cb-shadow);
+    }
+    .cb-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .cb-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(to top, rgba(0,0,0,0.06), transparent);
+      pointer-events: none;
+    }
+    .cb-header-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--cb-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .cb-header-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: #fff;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .cb-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.5px;
+      position: relative;
+      z-index: 1;
+    }
+    .cb-header p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.75);
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cb-card {
+      background: var(--cb-card);
+      border-radius: var(--cb-radius-lg);
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: var(--cb-shadow);
+      border: 1px solid var(--cb-border);
+      transition: var(--cb-transition);
+    }
+    .cb-card:hover {
+      box-shadow: var(--cb-shadow-hover);
+    }
+
+    .cb-section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .cb-section-num {
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, var(--cb-primary), var(--cb-primary-dark));
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+    }
+    .cb-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--cb-text);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .cb-section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--cb-border), transparent);
+      margin-left: 8px;
+    }
+
+    .cb-field {
+      margin-bottom: 20px;
+    }
+    .cb-field:last-child {
+      margin-bottom: 0;
+    }
+    .cb-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cb-text);
+      margin-bottom: 8px;
+    }
+    .cb-required {
+      color: var(--cb-danger);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .cb-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #f1f5f9;
+      color: var(--cb-text-sec);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .cb-tag.req {
+      background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      color: var(--cb-danger);
+    }
+
+    .cb-input, .cb-select, .cb-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 14px;
+      border: 1.5px solid var(--cb-border);
+      border-radius: var(--cb-radius-sm);
+      background: #fafbfc;
+      color: var(--cb-text);
+      transition: var(--cb-transition);
+      box-sizing: border-box;
+      font-family: inherit;
+      outline: none;
+    }
+    .cb-input::placeholder, .cb-textarea::placeholder {
+      color: var(--cb-text-hint);
+    }
+    .cb-input:focus, .cb-select:focus, .cb-textarea:focus {
+      border-color: var(--cb-border-focus);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.08);
+    }
+    .cb-select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+    }
+    .cb-select optgroup {
+      font-weight: 700;
+      color: var(--cb-text);
+      background: #f8fafc;
+    }
+    .cb-textarea {
+      min-height: 140px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .cb-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .cb-hint {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--cb-text-hint);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+    .cb-hint svg {
+      width: 13px;
+      height: 13px;
+      stroke: var(--cb-text-hint);
+      stroke-width: 2;
+      fill: none;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .cb-error-msg {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--cb-danger);
+      margin-top: 6px;
+      font-weight: 500;
+    }
+    .cb-error-msg svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--cb-danger);
+      stroke-width: 2.5;
+      fill: none;
+    }
+    .cb-input.error, .cb-select.error, .cb-textarea.error {
+      border-color: var(--cb-danger);
+      background: var(--cb-danger-bg);
+      box-shadow: 0 0 0 4px rgba(239,68,68,0.06);
+    }
+
+    .cb-submit-wrap {
+      margin-top: 8px;
+    }
+    .cb-submit {
+      width: 100%;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, var(--cb-primary), var(--cb-primary-dark));
+      border: none;
+      border-radius: var(--cb-radius-sm);
+      cursor: pointer;
+      transition: var(--cb-transition);
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cb-submit::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transition: left 0.5s;
+    }
+    .cb-submit:hover::after {
+      left: 100%;
+    }
+    .cb-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(99,102,241,0.3);
+    }
+    .cb-submit:active {
+      transform: translateY(0);
+    }
+    .cb-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .cb-submit svg {
+      width: 18px;
+      height: 18px;
+      stroke: #fff;
+      stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .cb-success {
+      display: none;
+      text-align: center;
+      padding: 48px 24px;
+    }
+    .cb-success-ring {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, var(--cb-success), #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(16,185,129,0.25);
+      animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .cb-success-ring svg {
+      width: 32px;
+      height: 32px;
+      stroke: #fff;
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .cb-success h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--cb-text);
+      margin: 0 0 8px 0;
+      letter-spacing: -0.3px;
+    }
+    .cb-success p {
+      font-size: 14px;
+      color: var(--cb-text-sec);
+      margin: 0 0 20px 0;
+      line-height: 1.5;
+    }
+    .cb-ref-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f1f5f9;
+      border: 1.5px dashed var(--cb-border);
+      border-radius: var(--cb-radius-sm);
+      padding: 10px 20px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--cb-primary-dark);
+      letter-spacing: 0.5px;
+    }
+    .cb-ref-box svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--cb-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+    .cb-reset-btn {
+      margin-top: 24px;
+      padding: 10px 24px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cb-primary);
+      background: transparent;
+      border: 1.5px solid var(--cb-primary);
+      border-radius: var(--cb-radius-sm);
+      cursor: pointer;
+      transition: var(--cb-transition);
+    }
+    .cb-reset-btn:hover {
+      background: var(--cb-primary);
+      color: #fff;
+    }
+
+    .cb-footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--cb-text-hint);
+      margin-top: 16px;
+      letter-spacing: 0.3px;
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 12px; }
+      .cb-card { padding: 20px; }
+      .cb-row { grid-template-columns: 1fr; }
+      .cb-header h1 { font-size: 20px; }
+    }
+  </style>
+<base target="_blank">
+</head>
+<body>
+  <div class="cb-wrapper">
+    <div class="cb-header">
+      <div class="cb-header-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <h1>Carrybee Issues Escalation</h1>
+      <p>Log and escalate merchant & consignment concerns</p>
+    </div>
+
+    <div id="formContent">
+      <!-- Section 1: Identification -->
+      <div class="cb-card">
+        <div class="cb-section-header">
+          <div class="cb-section-num">1</div>
+          <div class="cb-section-title">Identification</div>
+          <div class="cb-section-line"></div>
+        </div>
+
+        <div class="cb-field">
+          <label class="cb-label">
+            Consignment ID / Merchant Name
+            <span class="cb-required">*</span>
+            <span class="cb-tag req">Required</span>
+          </label>
+          <input type="text" class="cb-input" id="merchantId" placeholder="Enter Consignment ID or Merchant Name" />
+          <div class="cb-hint">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Provide whichever identifier is applicable for this issue
+          </div>
+          <div class="cb-error-msg" id="err-merchantId">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            This field is required
+          </div>
+        </div>
+
+        <div class="cb-field">
+          <label class="cb-label">
+            KAM Name
+            <span class="cb-tag">Optional</span>
+          </label>
+          <select class="cb-select" id="kamName">
+            <option value="" disabled selected>Select KAM Name</option>
+            <option value="Raian Islam Rudra">Raian Islam Rudra</option>
+            <option value="Akash Saha">Akash Saha</option>
+            <option value="Ahmed Asif Rashid">Ahmed Asif Rashid</option>
+            <option value="Tanvir Ahmmed">Tanvir Ahmmed</option>
+            <option value="Rizvi Ahmed">Rizvi Ahmed</option>
+            <option value="Sazzad Haider">Sazzad Haider</option>
+            <option value="Nuruzzaman Nahid">Nuruzzaman Nahid</option>
+            <option value="Md Ibrahim Mojumder">Md Ibrahim Mojumder</option>
+            <option value="Md. Mahmudul Hasan">Md. Mahmudul Hasan</option>
+            <option value="S. M Shihab">S. M Shihab</option>
+            <option value="Md. Anik Ahamed">Md. Anik Ahamed</option>
+            <option value="MD Sohel Rana">MD Sohel Rana</option>
+            <option value="Hasib Islam">Hasib Islam</option>
+            <option value="SK Fardin Osi">SK Fardin Osi</option>
+            <option value="Jaber Al Aunto">Jaber Al Aunto</option>
+            <option value="Md. Asif Rayhan">Md. Asif Rayhan</option>
+            <option value="Shabib Md Shahnawaj">Shabib Md Shahnawaj</option>
+            <option value="Abdul Goni Howladar">Abdul Goni Howladar</option>
+            <option value="Jubayer Rahman">Jubayer Rahman</option>
+            <option value="MD Solayman Shadik Shady">MD Solayman Shadik Shady</option>
+            <option value="Shohanur Rahman Shuvo">Shohanur Rahman Shuvo</option>
+            <option value="MD.kayef Ahmed Shajib">MD.kayef Ahmed Shajib</option>
+            <option value="Rahul Roy">Rahul Roy</option>
+          </select>
+        </div>
+
+        <div class="cb-row">
+          <div class="cb-field">
+            <label class="cb-label">Channel <span class="cb-tag">Optional</span></label>
+            <select class="cb-select" id="channel">
+              <option value="" disabled selected>Select Channel</option>
+              <option value="KAM">KAM</option>
+              <option value="Contact center">Contact Center</option>
+              <option value="FB">FB</option>
+              <option value="OPS">OPS</option>
+              <option value="HUB">HUB</option>
+            </select>
+          </div>
+          <div class="cb-field">
+            <label class="cb-label">Zone <span class="cb-tag">Optional</span></label>
+            <select class="cb-select" id="zone">
+              <option value="" disabled selected>Select Zone</option>
+              <option value="ISD">ISD</option>
+              <option value="OSD">OSD</option>
+              <option value="RSD">RSD</option>
+              <option value="Central short">Central Short</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Issue Classification -->
+      <div class="cb-card">
+        <div class="cb-section-header">
+          <div class="cb-section-num">2</div>
+          <div class="cb-section-title">Issue Classification</div>
+          <div class="cb-section-line"></div>
+        </div>
+
+        <div class="cb-field">
+          <label class="cb-label">
+            Concern Hub
+            <span class="cb-required">*</span>
+            <span class="cb-tag req">Required</span>
+          </label>
+          <select class="cb-select" id="concernHub">
+            <option value="" disabled selected>Select Concern Hub</option>
+            <optgroup label="Dhaka North">
+              <option value="Uttara">Uttara</option>
+              <option value="Diabari">Diabari</option>
+              <option value="Khilkhet">Khilkhet</option>
+              <option value="Mohakhali">Mohakhali</option>
+              <option value="Badda">Badda</option>
+            </optgroup>
+            <optgroup label="Dhaka Central">
+              <option value="Pallabi">Pallabi</option>
+              <option value="60 Feet">60 Feet</option>
+              <option value="Mohammadpur">Mohammadpur</option>
+              <option value="Kolabagan">Kolabagan</option>
+              <option value="Lalbagh">Lalbagh</option>
+              <option value="Kamrangirchar">Kamrangirchar</option>
+            </optgroup>
+            <optgroup label="Dhaka South">
+              <option value="Jatrabari">Jatrabari</option>
+              <option value="Khilgaon">Khilgaon</option>
+              <option value="Dhonia">Dhonia</option>
+              <option value="Demra">Demra</option>
+            </optgroup>
+            <optgroup label="Gazipur & Savar">
+              <option value="Gazipur-Joydebpur">Gazipur-Joydebpur</option>
+              <option value="Gazipur-Kapasiya">Gazipur-Kapasiya</option>
+              <option value="Gazipur-Mawna">Gazipur-Mawna</option>
+              <option value="Gazipur-Mouchak">Gazipur-Mouchak</option>
+              <option value="Gazipur-Boardbazar">Gazipur-Boardbazar</option>
+              <option value="Gazipur-Kaliganj">Gazipur-Kaliganj</option>
+              <option value="Savar">Savar</option>
+              <option value="Savar-Baipail">Savar-Baipail</option>
+              <option value="Savar-Dhamrai">Savar-Dhamrai</option>
+            </optgroup>
+            <optgroup label="Narayanganj & Surroundings">
+              <option value="Narayanganj">Narayanganj</option>
+              <option value="Sonargaon">Sonargaon</option>
+              <option value="Narayanganj-Bandar">Narayanganj-Bandar</option>
+              <option value="Narayanganj-Araihazar">Narayanganj-Araihazar</option>
+              <option value="Bhulta-Gawsia">Bhulta-Gawsia</option>
+              <option value="Dohar-Nawabganj">Dohar-Nawabganj</option>
+              <option value="Keraniganj-Ati Bazar">Keraniganj-Ati Bazar</option>
+              <option value="Siddhirganj">Siddhirganj</option>
+              <option value="Keraniganj">Keraniganj</option>
+            </optgroup>
+            <optgroup label="Khulna Division">
+              <option value="Narail-Sadar">Narail-Sadar</option>
+              <option value="Jhenaidah-Sadar">Jhenaidah-Sadar</option>
+              <option value="Jhenaidah-Maheshpur">Jhenaidah-Maheshpur</option>
+              <option value="Bagerhat-Sadar">Bagerhat-Sadar</option>
+              <option value="Kushtia-Sadar">Kushtia-Sadar</option>
+              <option value="Kushtia-Daulatpur">Kushtia-Daulatpur</option>
+              <option value="Kushtia-Bheramara">Kushtia-Bheramara</option>
+              <option value="Jessore-Manirampur">Jessore-Manirampur</option>
+              <option value="Bagerhat-Mongla">Bagerhat-Mongla</option>
+              <option value="Bagerhat-Morrelganj">Bagerhat-Morrelganj</option>
+              <option value="Jessore-Sadar">Jessore-Sadar</option>
+              <option value="Jessore-Sharsha">Jessore-Sharsha</option>
+              <option value="Jessore-Abhaynagar">Jessore-Abhaynagar</option>
+              <option value="Khulna-Paikgacha">Khulna-Paikgacha</option>
+              <option value="Khulna-Dumuria">Khulna-Dumuria</option>
+              <option value="Khulna-Sadar">Khulna-Sadar</option>
+              <option value="Chuadanga-Sadar">Chuadanga-Sadar</option>
+              <option value="Satkhira-Sadar">Satkhira-Sadar</option>
+              <option value="Satkhira-Kaliganj">Satkhira-Kaliganj</option>
+              <option value="Meherpur-Sadar">Meherpur-Sadar</option>
+              <option value="Magura-Sadar">Magura-Sadar</option>
+            </optgroup>
+            <optgroup label="Barishal Division">
+              <option value="Bhola-Sadar">Bhola-Sadar</option>
+              <option value="Pirojpur-Sadar">Pirojpur-Sadar</option>
+              <option value="Barishal-Sadar">Barishal-Sadar</option>
+              <option value="Barisal-Muladi">Barisal-Muladi</option>
+              <option value="Barisal-Bakerganj">Barisal-Bakerganj</option>
+              <option value="Bhola-Charfassion">Bhola-Charfassion</option>
+              <option value="Pirojpur-Mathbaria">Pirojpur-Mathbaria</option>
+              <option value="Barisal-Gournadi">Barisal-Gournadi</option>
+              <option value="Barguna-Sadar">Barguna-Sadar</option>
+              <option value="Jhalokathi-Sadar">Jhalokathi-Sadar</option>
+              <option value="Patuakhali-Sadar">Patuakhali-Sadar</option>
+              <option value="Patuakhali-Galachipa">Patuakhali-Galachipa</option>
+              <option value="Patuakhali-Kalapara">Patuakhali-Kalapara</option>
+            </optgroup>
+            <optgroup label="Comilla & Noakhali">
+              <option value="Comilla-Laksam">Comilla-Laksam</option>
+              <option value="Comilla-Sadar">Comilla-Sadar</option>
+              <option value="Comilla-Muradnagar">Comilla-Muradnagar</option>
+              <option value="Comilla-Chandina">Comilla-Chandina</option>
+              <option value="Comilla-Chauddagram">Comilla-Chauddagram</option>
+              <option value="Comilla-Daudkandi">Comilla-Daudkandi</option>
+              <option value="Noakhali-Begumganj">Noakhali-Begumganj</option>
+              <option value="Comilla-Nangalkot">Comilla-Nangalkot</option>
+              <option value="Chandpur-Kachua">Chandpur-Kachua</option>
+              <option value="Lakshmipur-Ramganj">Lakshmipur-Ramganj</option>
+              <option value="Chandpur-Matlab Dakshin">Chandpur-Matlab Dakshin</option>
+              <option value="Lakshmipur-Kamalnagar">Lakshmipur-Kamalnagar</option>
+              <option value="Comilla-Burichang">Comilla-Burichang</option>
+              <option value="Comilla-Brahmanpara">Comilla-Brahmanpara</option>
+              <option value="Noakhali-Senbagh">Noakhali-Senbagh</option>
+              <option value="Noakhali-Companiganj">Noakhali-Companiganj</option>
+              <option value="Noakhali-Sadar">Noakhali-Sadar</option>
+              <option value="Noakhali-Chatkhil">Noakhali-Chatkhil</option>
+              <option value="Noakhali-Subarnachar">Noakhali-Subarnachar</option>
+              <option value="Chandpur-Sadar">Chandpur-Sadar</option>
+              <option value="Chandpur-Faridganj">Chandpur-Faridganj</option>
+              <option value="Chandpur-Hajiganj">Chandpur-Hajiganj</option>
+              <option value="Lakshmipur-Sadar">Lakshmipur-Sadar</option>
+            </optgroup>
+            <optgroup label="Chittagong Division">
+              <option value="Bandarban-Sadar">Bandarban-Sadar</option>
+              <option value="Cox's Bazar-Chakaria">Cox's Bazar-Chakaria</option>
+              <option value="Cox's Bazar-Maheshkhali">Cox's Bazar-Maheshkhali</option>
+              <option value="Cox's Bazar-Ramu">Cox's Bazar-Ramu</option>
+              <option value="Cox's Bazar-Sadar">Cox's Bazar-Sadar</option>
+              <option value="Cox's Bazar-Teknaf">Cox's Bazar-Teknaf</option>
+              <option value="Cox's Bazar-Ukhia">Cox's Bazar-Ukhia</option>
+              <option value="CTG-Anwara">CTG-Anwara</option>
+              <option value="CTG-Banshkhali">CTG-Banshkhali</option>
+              <option value="CTG-Fatikchari">CTG-Fatikchari</option>
+              <option value="CTG-Halishahar">CTG-Halishahar</option>
+              <option value="CTG-Hathazari">CTG-Hathazari</option>
+              <option value="CTG-Mirsarai">CTG-Mirsarai</option>
+              <option value="CTG-Nasirabad">CTG-Nasirabad</option>
+              <option value="CTG-Patenga">CTG-Patenga</option>
+              <option value="CTG-Patiya">CTG-Patiya</option>
+              <option value="CTG-Rangunia">CTG-Rangunia</option>
+              <option value="CTG-Raozan">CTG-Raozan</option>
+              <option value="CTG-Satkania">CTG-Satkania</option>
+              <option value="CTG-Sitakunda">CTG-Sitakunda</option>
+              <option value="Feni-Chhagalnaiya">Feni-Chhagalnaiya</option>
+              <option value="Feni-Daganbhuya">Feni-Daganbhuya</option>
+              <option value="Feni-Sadar">Feni-Sadar</option>
+              <option value="Feni-Sonagazi">Feni-Sonagazi</option>
+              <option value="Khagrachari-Sadar">Khagrachari-Sadar</option>
+              <option value="Rangamati-Sadar">Rangamati-Sadar</option>
+            </optgroup>
+            <optgroup label="Narsingdi & Kishoreganj">
+              <option value="Narsingdi-Sadar">Narsingdi-Sadar</option>
+              <option value="Narsingdi-Roypura">Narsingdi-Roypura</option>
+              <option value="Narsingdi-Shibpur">Narsingdi-Shibpur</option>
+              <option value="Kishoreganj-Mithamain">Kishoreganj-Mithamain</option>
+              <option value="Kishoreganj-Pakundia">Kishoreganj-Pakundia</option>
+              <option value="Kishoreganj-Sadar">Kishoreganj-Sadar</option>
+              <option value="B.Baria-Sadar">B.Baria-Sadar</option>
+              <option value="B.Baria-Kasba">B.Baria-Kasba</option>
+              <option value="B.Baria-Nabinagar">B.Baria-Nabinagar</option>
+              <option value="B.Baria-Bancharampur">B.Baria-Bancharampur</option>
+              <option value="B.Baria-Nasirnagar">B.Baria-Nasirnagar</option>
+              <option value="B.Baria-Akhaura">B.Baria-Akhaura</option>
+              <option value="Kishoreganj-Bhairab">Kishoreganj-Bhairab</option>
+            </optgroup>
+            <optgroup label="Manikganj, Tangail & Surroundings">
+              <option value="Manikganj-Sadar">Manikganj-Sadar</option>
+              <option value="Shariatpur-Sadar">Shariatpur-Sadar</option>
+              <option value="Gopalganj-Sadar">Gopalganj-Sadar</option>
+              <option value="Faridpur-Sadar">Faridpur-Sadar</option>
+              <option value="Faridpur-Boalmari">Faridpur-Boalmari</option>
+              <option value="Gopalganj-Muksudpur">Gopalganj-Muksudpur</option>
+              <option value="Shariatpur-Damudya">Shariatpur-Damudya</option>
+              <option value="Madaripur-Shibchar">Madaripur-Shibchar</option>
+              <option value="Tangail-Sakhipur">Tangail-Sakhipur</option>
+              <option value="Manikganj-Singair">Manikganj-Singair</option>
+              <option value="Munshiganj-Sirajdikhan">Munshiganj-Sirajdikhan</option>
+              <option value="Madaripur-Sadar">Madaripur-Sadar</option>
+              <option value="Faridpur-Bhanga">Faridpur-Bhanga</option>
+              <option value="Munshiganj-Sreenagar">Munshiganj-Sreenagar</option>
+              <option value="Tangail-Mirzapur">Tangail-Mirzapur</option>
+              <option value="Munshiganj-Sadar">Munshiganj-Sadar</option>
+              <option value="Rajbari-Sadar">Rajbari-Sadar</option>
+              <option value="Tangail-Sadar">Tangail-Sadar</option>
+              <option value="Tangail-Ghatail">Tangail-Ghatail</option>
+            </optgroup>
+            <optgroup label="Sylhet Division">
+              <option value="Sylhet-Sadar">Sylhet-Sadar</option>
+              <option value="Sylhet-Fenchuganj">Sylhet-Fenchuganj</option>
+              <option value="Sylhet-Golapganj">Sylhet-Golapganj</option>
+              <option value="Sylhet-Beanibazar">Sylhet-Beanibazar</option>
+              <option value="Sylhet-Bishwanath">Sylhet-Bishwanath</option>
+              <option value="Sylhet-Jaintiapur">Sylhet-Jaintiapur</option>
+              <option value="Sylhet-Gowainghat">Sylhet-Gowainghat</option>
+              <option value="Sylhet-Osmaninagar">Sylhet-Osmaninagar</option>
+              <option value="Sylhet-Kanaighat">Sylhet-Kanaighat</option>
+              <option value="Sylhet-Dakshin Surma">Sylhet-Dakshin Surma</option>
+              <option value="Habiganj-Sadar">Habiganj-Sadar</option>
+              <option value="Habiganj-Chunarughat">Habiganj-Chunarughat</option>
+              <option value="Habiganj-Madhabpur">Habiganj-Madhabpur</option>
+              <option value="Habiganj-Nabiganj">Habiganj-Nabiganj</option>
+              <option value="Moulvibazar-Barlekha">Moulvibazar-Barlekha</option>
+              <option value="Moulvibazar-Kulaura">Moulvibazar-Kulaura</option>
+              <option value="Maulvibazar-Sadar">Maulvibazar-Sadar</option>
+              <option value="Moulvibazar-Rajnagar">Moulvibazar-Rajnagar</option>
+              <option value="Moulvibazar-Sreemangal">Moulvibazar-Sreemangal</option>
+              <option value="Moulvibazar-Kamalganj">Moulvibazar-Kamalganj</option>
+              <option value="Sunamganj-Sadar">Sunamganj-Sadar</option>
+              <option value="Sunamganj-Chhatak">Sunamganj-Chhatak</option>
+              <option value="Sunamganj-Jagannathpur">Sunamganj-Jagannathpur</option>
+              <option value="Sunamganj-Derai">Sunamganj-Derai</option>
+              <option value="Netrokona-Sadar">Netrokona-Sadar</option>
+              <option value="Netrakona-Mohonganj">Netrakona-Mohonganj</option>
+              <option value="Mymensingh-Bhaluka">Mymensingh-Bhaluka</option>
+              <option value="Mymensingh-Gaffargaon">Mymensingh-Gaffargaon</option>
+              <option value="Mymensingh-Trishal">Mymensingh-Trishal</option>
+              <option value="Mymensingh-Phulpur">Mymensingh-Phulpur</option>
+              <option value="Mymensingh-Sadar">Mymensingh-Sadar</option>
+              <option value="Jamalpur-Sadar">Jamalpur-Sadar</option>
+              <option value="Jamalpur-Dewanganj">Jamalpur-Dewanganj</option>
+              <option value="Sherpur-Sadar">Sherpur-Sadar</option>
+            </optgroup>
+            <optgroup label="Rajshahi & Rangpur">
+              <option value="Naogaon-Sadar">Naogaon-Sadar</option>
+              <option value="Joypurhat-Sadar">Joypurhat-Sadar</option>
+              <option value="Rajshahi-Sadar">Rajshahi-Sadar</option>
+              <option value="Bogra-Sherpur">Bogra-Sherpur</option>
+              <option value="Sirajganj-Sadar">Sirajganj-Sadar</option>
+              <option value="Pabna-Bhangura">Pabna-Bhangura</option>
+              <option value="Bogra-Sadar">Bogra-Sadar</option>
+              <option value="Natore-Sadar">Natore-Sadar</option>
+              <option value="Pabna-Ishwardi">Pabna-Ishwardi</option>
+              <option value="Pabna-Sadar">Pabna-Sadar</option>
+              <option value="Sirajganj-Shahjadpur">Sirajganj-Shahjadpur</option>
+              <option value="Chapainawabganj-Shibganj">Chapainawabganj-Shibganj</option>
+              <option value="Rajshahi-Puthia">Rajshahi-Puthia</option>
+              <option value="Bogra-Dhupchanchia">Bogra-Dhupchanchia</option>
+              <option value="Chapainawabganj-Sadar">Chapainawabganj-Sadar</option>
+              <option value="Sirajganj-Ullapara">Sirajganj-Ullapara</option>
+              <option value="Naogaon-Patnitala">Naogaon-Patnitala</option>
+              <option value="Rangpur-Sadar">Rangpur-Sadar</option>
+              <option value="Dinajpur-Sadar">Dinajpur-Sadar</option>
+              <option value="Gaibandha-Sadar">Gaibandha-Sadar</option>
+              <option value="Nilphamari-Sadar">Nilphamari-Sadar</option>
+              <option value="Panchagarh-Sadar">Panchagarh-Sadar</option>
+              <option value="Dinajpur-Nawabganj">Dinajpur-Nawabganj</option>
+              <option value="Nilphamari-Joldhaka">Nilphamari-Joldhaka</option>
+              <option value="Kurigram-Sadar">Kurigram-Sadar</option>
+              <option value="Thakurgaon-Sadar">Thakurgaon-Sadar</option>
+              <option value="Lalmonirhat-Sadar">Lalmonirhat-Sadar</option>
+              <option value="Rangpur-Mithapukur">Rangpur-Mithapukur</option>
+              <option value="Dinajpur-Birganj">Dinajpur-Birganj</option>
+              <option value="Nilphamari-Saidpur">Nilphamari-Saidpur</option>
+              <option value="Gaibandha-Gobindaganj">Gaibandha-Gobindaganj</option>
+            </optgroup>
+          </select>
+          <div class="cb-hint">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Select the Concern Hub from the grouped list
+          </div>
+          <div class="cb-error-msg" id="err-concernHub">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            Please select a Concern Hub
+          </div>
+        </div>
+
+        <div class="cb-row">
+          <div class="cb-field">
+            <label class="cb-label">Issue Status <span class="cb-tag">Optional</span></label>
+            <select class="cb-select" id="issueStatus">
+              <option value="" disabled selected>Select Status</option>
+              <option value="Pending" selected>Pending</option>
+            </select>
+          </div>
+          <div class="cb-field">
+            <label class="cb-label">
+              Issue Category
+              <span class="cb-required">*</span>
+              <span class="cb-tag req">Required</span>
+            </label>
+            <select class="cb-select" id="issueCategory">
+              <option value="" disabled selected>Select Category</option>
+              <option value="Execution Request">Execution Request</option>
+              <option value="Forcefully Taken">Forcefully Taken</option>
+              <option value="Inquiry">Inquiry</option>
+              <option value="Panel Status">Panel Status</option>
+              <option value="Complain Why Return">Complain Why Return</option>
+              <option value="Coverage/Point Delivery">Coverage/Point Delivery</option>
+              <option value="Delivery Delay">Delivery Delay</option>
+              <option value="Payment Issue">Payment Issue</option>
+              <option value="Pickup">Pickup</option>
+              <option value="Return Delay">Return Delay</option>
+              <option value="Return Exchange">Return Exchange</option>
+              <option value="Reverse Pickup">Reverse Pickup</option>
+              <option value="Charge Extra/Wrong COD">Charge Extra/Wrong COD</option>
+              <option value="Damage">Damage</option>
+              <option value="No Entry/Cancelled">No Entry/Cancelled</option>
+              <option value="Unprofessionalism">Unprofessionalism</option>
+              <option value="Wrong Routing">Wrong Routing</option>
+              <option value="Wrong Tag/Parcel Swapped">Wrong Tag/Parcel Swapped</option>
+              <option value="Breach of CLOSEBOX">Breach of CLOSEBOX</option>
+              <option value="Urgent Delivery">Urgent Delivery</option>
+            </select>
+            <div class="cb-error-msg" id="err-issueCategory">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+              Please select an issue category
+            </div>
+          </div>
+        </div>
+
+        <div class="cb-field">
+          <label class="cb-label">
+            Issue Sub Category
+            <span class="cb-required">*</span>
+            <span class="cb-tag req">Required</span>
+          </label>
+          <select class="cb-select" id="subCategory">
+            <option value="" disabled selected>Select Sub Category</option>
+            <optgroup label="Execution & Updates">
+              <option value="Order Cancellation Request">Order Cancellation Request</option>
+              <option value="Price Updation Request">Price Updation Request</option>
+              <option value="Customer Address Update">Customer Address Update</option>
+              <option value="Customer Contact Update">Customer Contact Update</option>
+              <option value="Payment Info Update">Payment Info Update</option>
+              <option value="Profile Info Update">Profile Info Update</option>
+              <option value="Profile Password Update">Profile Password Update</option>
+              <option value="Store Approval">Store Approval</option>
+              <option value="Store Info Update">Store Info Update</option>
+              <option value="Hold Request">Hold Request</option>
+              <option value="Partial Delivery Request – Special Instruction">Partial Delivery Request – Special Instruction</option>
+              <option value="Uninformed Info Change">Uninformed Info Change</option>
+            </optgroup>
+            <optgroup label="Agent & Fraud">
+              <option value="Agent Details Missing/Wrong Number">Agent Details Missing/Wrong Number</option>
+              <option value="Fraudulent Activity">Fraudulent Activity</option>
+            </optgroup>
+            <optgroup label="Delivery & Return">
+              <option value="Delivery/Return">Delivery/Return</option>
+              <option value="Delivery Hold">Delivery Hold</option>
+              <option value="Order Info/Status">Order Info/Status</option>
+            </optgroup>
+            <optgroup label="Inquiry & Feedback">
+              <option value="Coverage Area">Coverage Area</option>
+              <option value="Feedback/Suggestion">Feedback/Suggestion</option>
+              <option value="Courier Service">Courier Service</option>
+              <option value="Silent Call/Chat">Silent Call/Chat</option>
+              <option value="Merchant Panel/App">Merchant Panel/App</option>
+            </optgroup>
+            <optgroup label="Join & Transfer">
+              <option value="Interested to Join as Agent">Interested to Join as Agent</option>
+              <option value="Interested to Join As Merchant">Interested to Join As Merchant</option>
+              <option value="Other Vertical Transfer">Other Vertical Transfer</option>
+            </optgroup>
+            <optgroup label="Payment & Charges">
+              <option value="Payment Process Courier">Payment Process Courier</option>
+              <option value="CarryBee Outbound Call">CarryBee Outbound Call</option>
+              <option value="Pickup Entry">Pickup Entry</option>
+              <option value="Reverse Pickup">Reverse Pickup</option>
+              <option value="Return Exchange">Return Exchange</option>
+              <option value="Extra Charge Offered">Extra Charge Offered</option>
+              <option value="Extra Charge Demanded">Extra Charge Demanded</option>
+              <option value="Wrong COD Collection">Wrong COD Collection</option>
+              <option value="Wrong Weight Input">Wrong Weight Input</option>
+              <option value="Miscalculation of Weight Charge">Miscalculation of Weight Charge</option>
+              <option value="Miscalculation of Delivery/Return Charge">Miscalculation of Delivery/Return Charge</option>
+              <option value="Miscalculation of COD Charge">Miscalculation of COD Charge</option>
+            </optgroup>
+            <optgroup label="Damage & Loss">
+              <option value="Poor Packaging">Poor Packaging</option>
+              <option value="Not Processed Under Fragile Category">Not Processed Under Fragile Category</option>
+              <option value="Act of God">Act of God</option>
+              <option value="Defective Product Sent By Merchant">Defective Product Sent By Merchant</option>
+              <option value="Liquid Leakage">Liquid Leakage</option>
+              <option value="Stapler Pin">Stapler Pin</option>
+              <option value="Rat Bites">Rat Bites</option>
+              <option value="Mishandling">Mishandling</option>
+              <option value="Trackless">Trackless</option>
+              <option value="Parcel Lost By OPS">Parcel Lost By OPS</option>
+              <option value="Hijacking/Robbery">Hijacking/Robbery</option>
+              <option value="Empty Package/Empty Packet/Empty Box">Empty Package/Empty Packet/Empty Box</option>
+              <option value="Partial Missing">Partial Missing</option>
+            </optgroup>
+            <optgroup label="Entry & Info">
+              <option value="Double Entry">Double Entry</option>
+              <option value="No Entry">No Entry</option>
+              <option value="Info Mismatch">Info Mismatch</option>
+              <option value="Product Not Given By Merchant">Product Not Given By Merchant</option>
+            </optgroup>
+            <optgroup label="Behavior & Routing">
+              <option value="Misbehavior By PA / DA / Employee">Misbehavior By PA / DA / Employee</option>
+              <option value="Incomplete/Wrong Info Input On Panel">Incomplete/Wrong Info Input On Panel</option>
+              <option value="Wrong Routing By Processing Team">Wrong Routing By Processing Team</option>
+              <option value="Wrong POD Attached">Wrong POD Attached</option>
+              <option value="Technical Error">Technical Error</option>
+              <option value="Wrong Tag By LMH / FMH / Processing Team">Wrong Tag By LMH / FMH / Processing Team</option>
+            </optgroup>
+          </select>
+          <div class="cb-error-msg" id="err-subCategory">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            Please select a sub category
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Details -->
+      <div class="cb-card">
+        <div class="cb-section-header">
+          <div class="cb-section-num">3</div>
+          <div class="cb-section-title">Details</div>
+          <div class="cb-section-line"></div>
+        </div>
+
+        <div class="cb-field">
+          <label class="cb-label">
+            Issue Details
+            <span class="cb-required">*</span>
+            <span class="cb-tag req">Required</span>
+          </label>
+          <textarea class="cb-textarea" id="issueDetails" placeholder="Describe the issue in detail — include timeline, impact, and any steps already taken..."></textarea>
+          <div class="cb-hint">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Be specific. Include order numbers, dates, and any communication history.
+          </div>
+          <div class="cb-error-msg" id="err-issueDetails">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            This field is required
+          </div>
+        </div>
+      </div>
+
+      <div class="cb-submit-wrap">
+        <button class="cb-submit" id="submitBtn" onclick="submitForm()">
+          <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          Submit Escalation
+        </button>
+      </div>
+    </div>
+
+    <div class="cb-success" id="successView">
+      <div class="cb-card">
+        <div class="cb-success-ring">
+          <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2>Escalation Submitted</h2>
+        <p>Your issue has been logged successfully and routed to the appropriate team.</p>
+        <div class="cb-ref-box">
+          <svg viewBox="0 0 24 24"><path d="M4 7V4h3"/><path d="M4 17v3h3"/><path d="M20 7V4h-3"/><path d="M20 17v3h-3"/><path d="M9 9h6v6H9z"/></svg>
+          <span id="refId">CBE-2026-XXXX</span>
+        </div>
+        <br>
+        <button class="cb-reset-btn" onclick="resetForm()">Submit Another</button>
+      </div>
+    </div>
+
+    <div class="cb-footer">
+      Carrybee Support System &middot; All fields marked with <span style="color:var(--cb-danger)">*</span> are mandatory
+    </div>
+  </div>
+
+  <script>
+    function generateRefId() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const random = Math.floor(1000 + Math.random() * 9000);
+      return 'CBE-' + year + '-' + random;
+    }
+
+    function validate() {
+      let valid = true;
+      const fields = [
+        { id: 'merchantId', err: 'err-merchantId' },
+        { id: 'concernHub', err: 'err-concernHub' },
+        { id: 'issueCategory', err: 'err-issueCategory' },
+        { id: 'subCategory', err: 'err-subCategory' },
+        { id: 'issueDetails', err: 'err-issueDetails' }
+      ];
+
+      fields.forEach(f => {
+        const el = document.getElementById(f.id);
+        const err = document.getElementById(f.err);
+        if (!el.value.trim()) {
+          el.classList.add('error');
+          err.style.display = 'flex';
+          valid = false;
+        } else {
+          el.classList.remove('error');
+          err.style.display = 'none';
+        }
+      });
+
+      return valid;
+    }
+
+    function submitForm() {
+      if (!validate()) return;
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;animation:spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Processing...';
+
+      if (!document.getElementById('spinStyle')) {
+        const s = document.createElement('style');
+        s.id = 'spinStyle';
+        s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+        document.head.appendChild(s);
+      }
+
+      setTimeout(() => {
+        document.getElementById('refId').textContent = generateRefId();
+        document.getElementById('formContent').style.display = 'none';
+        document.getElementById('successView').style.display = 'block';
+      }, 1200);
+    }
+
+    function resetForm() {
+      document.getElementById('formContent').style.display = 'block';
+      document.getElementById('successView').style.display = 'none';
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = false;
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg> Submit Escalation';
+
+      ['merchantId','issueDetails'].forEach(id => {
+        document.getElementById(id).value = '';
+        document.getElementById(id).classList.remove('error');
+        document.getElementById('err-' + id).style.display = 'none';
+      });
+      ['channel','zone','issueStatus','issueCategory','subCategory','concernHub','kamName'].forEach(id => {
+        document.getElementById(id).selectedIndex = 0;
+        document.getElementById(id).classList.remove('error');
+        const err = document.getElementById('err-' + id);
+        if (err) err.style.display = 'none';
+      });
+    }
+
+    ['merchantId','issueDetails'].forEach(id => {
+      document.getElementById(id).addEventListener('input', function() {
+        this.classList.remove('error');
+        const errId = 'err-' + id;
+        const errEl = document.getElementById(errId);
+        if (errEl) errEl.style.display = 'none';
+      });
+    });
+    ['channel','zone','issueStatus','issueCategory','subCategory','concernHub','kamName'].forEach(id => {
+      document.getElementById(id).addEventListener('change', function() {
+        this.classList.remove('error');
+        const errId = 'err-' + id;
+        const errEl = document.getElementById(errId);
+        if (errEl) errEl.style.display = 'none';
+      });
+    });
+  </script>
+</body>
+</html>
